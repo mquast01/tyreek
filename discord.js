@@ -2,12 +2,17 @@
 const Discord = require('discord.js');
 const { readdirSync } = require('fs');
 const { join } = require('path');
+const config = require("./config.json");
+
+const { Client } = require('espn-fantasy-football-api/node'); 
+const espnClient = new Client({leagueId: 43357137});
+espnClient.setCookies({ espnS2: config.espn_s2, SWID: config.SWID });
+
 
 const client = new Discord.Client();
 const Collection = new Discord.Collection();
 
-const config = require("./config.json");
-const spit2 = client.channels.cache.get('711072853117632574');
+//const spit2 = client.channels.cache.get('711072853117632574');
 
 client.commands = Collection;
 const commandFiles = readdirSync(join(__dirname, 'commands')).filter((file) => file.endsWith(".js"));
@@ -30,11 +35,16 @@ client.on('message', message => {
 	} 
 
   if (message.content[0] !== '!') return;
-
-  const command = client.commands.get((message.content).slice(1));
+  const args = message.content.slice(1).trim().split(' ');
+  const command_name = args.shift().toLowerCase();
+  const command = client.commands.get(command_name);
   if(!command) return;
 
   try {
+    if(command.ffootball){
+      command.execute(espnClient, args, message);
+      return;
+    }
     command.execute(message);
   } catch (error) {
     console.error(error);
