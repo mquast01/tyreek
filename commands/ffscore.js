@@ -15,12 +15,13 @@ module.exports = {
     } else if (args[0] <= 0 || args[0] > weekCounter) {
       return message.channel.send('out of range');
     } else {
-      sPeriodId = args[0];
+      sPeriodId = parseInt(args[0]);
     }
     console.log(sPeriodId);
 
     myclient.getBoxscoreForWeek({seasonId: 2020, matchupPeriodId: sPeriodId, scoringPeriodId: sPeriodId}).then((score) => {
       score_message += "WEEK " + sPeriodId + "SCORE".padStart(37) + "\n";
+      console.log(score.length);
       for(i = 0; i < score.length; i++){
         score_message += ((league.teams[score[i].homeTeamId -1].location + " " + league.teams[score[i].homeTeamId -1].nickname).padStart(30));
         score_message += ("  " + score[i].homeScore).padStart(10) + "   " + (score[i].awayScore + "  ").padEnd(10);
