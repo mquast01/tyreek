@@ -4,15 +4,8 @@ const { readdirSync } = require('fs');
 const { join } = require('path');
 const config = require("./config.json");
 
-const { Client } = require('espn-fantasy-football-api/node'); 
-const espnClient = new Client({leagueId: 43357137});
-espnClient.setCookies({ espnS2: config.espn_s2, SWID: config.SWID });
-
-
 const client = new Discord.Client();
 const Collection = new Discord.Collection();
-
-//const spit2 = client.channels.cache.get('711072853117632574');
 
 client.commands = Collection;
 const commandFiles = readdirSync(join(__dirname, 'commands')).filter((file) => file.endsWith(".js"));
@@ -24,15 +17,22 @@ for (const file of commandFiles) {
 client.on('ready', () => {
   console.log('I am ready!');
   client.user.setActivity('the consequences of the industrial revolution', {type: 'WATCHING', url: 'https://www.twitch.tv/chess'});
+  //setInterval(() => client.commands.get("bible").execute(client), 1000 * 24 * 60 * 60);
+  (function bible() {
+	client.commands.get("bible").execute(client);
+	setTimeout(bible, 1000 * 60 * 60 * 24);
+  })();
 });
 
 client.on('message', message => {
   if (message.author.bot) return;
-  const kanye = message.content.match(new RegExp('kanye'));
-	if(kanye) {  
-    		message.channel.send('So you\'re a kanye fan huh? Who was in paris then?');
+  const match_arr = message.content.toLowerCase().match(new RegExp('kanye', "i"));
+	if(!match_arr) console.log('eee');
+	if(match_arr == 'kanye') {
+    		//message.channel.send('So you\'re a kanye fan huh? Who was in paris then?');
+		client.commands.get("kanye").execute(message);
 		return;  
-	} 
+	}
 
   if (message.content[0] !== '!') return;
   const args = message.content.slice(1).trim().split(' ');
@@ -41,10 +41,6 @@ client.on('message', message => {
   if(!command) return;
 
   try {
-    if(command.ffootball){
-      command.execute(espnClient, args, message);
-      return;
-    }
     command.execute(message);
   } catch (error) {
     console.error(error);
