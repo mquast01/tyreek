@@ -1,5 +1,6 @@
 const Discord = require('discord.js');
 const axios = require('axios');
+require('dotenv').config()
 
 module.exports = {
   name: "bible",
@@ -9,7 +10,7 @@ module.exports = {
 		var verse = response.data
 		verseArray = verse.match(/'([^']+)'/g);
 		verseMessage = verseArray[0] + " - " + verseArray[1].slice(1, -1);
-		return client.channels.cache.get('834546939810283530').send(verseMessage);
+		return client.channels.cache.get(process.env.BIBLE_CHANNEL_ID).send(verseMessage);
   	});
   }
 };
