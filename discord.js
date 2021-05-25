@@ -1,8 +1,8 @@
-//
 const Discord = require('discord.js');
 const { readdirSync } = require('fs');
 const { join } = require('path');
-const config = require("./config.json");
+//const config = require("./config.json");
+require('dotenv').config()
 
 const client = new Discord.Client();
 const Collection = new Discord.Collection();
@@ -17,10 +17,9 @@ for (const file of commandFiles) {
 client.on('ready', () => {
   console.log('I am ready!');
   client.user.setActivity('the consequences of the industrial revolution', {type: 'WATCHING', url: 'https://www.twitch.tv/chess'});
-  //setInterval(() => client.commands.get("bible").execute(client), 1000 * 24 * 60 * 60);
   (function bible() {
-	client.commands.get("bible").execute(client);
 	setTimeout(bible, 1000 * 60 * 60 * 24);
+	//client.commands.get("bible").execute(client);
   })();
 });
 
@@ -29,7 +28,6 @@ client.on('message', message => {
   const match_arr = message.content.toLowerCase().match(new RegExp('kanye', "i"));
 	if(!match_arr) console.log('eee');
 	if(match_arr == 'kanye') {
-    		//message.channel.send('So you\'re a kanye fan huh? Who was in paris then?');
 		client.commands.get("kanye").execute(message);
 		return;  
 	}
@@ -49,4 +47,4 @@ client.on('message', message => {
  
 });
 
-client.login(config.secret);
+client.login(process.env.CLIENT_SECRET);
